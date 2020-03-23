@@ -10,29 +10,35 @@ const DefaultHTML = require('parcel/src/packagers/HTMLPackager');
 const defaultOptions = {
   entryFile: 'static.js',
   exportedName: 'default',
+  targetSelector: '#root',
   removeFilesOnCompletion: true
 };
 
 module.exports = class extends DefaultHTML {
   async staticBundle(asset) {
 
-    const { pregenerate = {} } = await this.bundle.entryAsset.getPackage();
-    const options = Object.assign({}, defaultOptions, pregenerate);
+    // Get all the configuration
     const { rootDir } = this.options;
+    const { pregenerate = {} } = await this.bundle.entryAsset.getPackage();
+    const options = Object.assign({}, defaultOptions, { entryDirectory: rootDir }, pregenerate);
 
+    // Polyfill the odd browser dependency...
     global.location = { pathname: '/' };
 
-    const newBundler = new Bundler(path.join(rootDir, options.entryFile), { target: 'node', sourceMaps: false, logLevel: 2 });
+    // Bundle the file
+    const newBundler = new Bundler(path.join(rootDir, options.entryFile), { target: 'node', sourceMaps: false });
     const result = await newBundler.bundle();
 
+    // Render the markup
     const Static = require(result.name)[options.exportedName];
     const markup = renderToStaticMarkup(React.createElement(Static, {}, null));
 
+    // Load the HTML, inject the markup then update the asset
     const $ = cheerio.load(asset.generated.html);
-    $('#root').html(markup);
+    $(options.targetSelector).html(markup);
     asset.generated.html = $.html();
 
-
+    // Remove extraneous files
     if (options.removeFilesOnCompletion) {
       const filesToDelete = new Set([
         result.name,
