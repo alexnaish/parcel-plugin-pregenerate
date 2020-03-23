@@ -8,8 +8,9 @@ A Parcel plugin that allows pre-generating and inserting markup into your index.
 npm install -D parcel-plugin-pregenerate
 ```
 
+## Usage
 
-## Configuration
+You can customize the usage by adding a `pregenerate` object to your package.json with the following options.
 
 ### entryFile
 
