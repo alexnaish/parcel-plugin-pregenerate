@@ -12,6 +12,14 @@ npm install -D parcel-plugin-pregenerate
 
 You can customize the usage by adding a `pregenerate` object to your package.json with the following options.
 
+### templateFile
+
+The name of the file to overwrite. Defaults to `index.html`.
+
+### rootElement
+
+The selector of the HTML element you want to insert the pregenerated content into. Defaults to `#root`.
+
 ### entryFile
 
 The name of the file to render and insert. Defaults to `static.js`.
