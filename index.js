@@ -14,7 +14,12 @@ const defaultOptions = {
   removeFilesOnCompletion: true
 };
 
+const NOOP = () => {};
+const storageMock = { getItem: NOOP, setItem: NOOP, clear: NOOP };
+
 global.location = { pathname: '/' };
+global.localStorage = storageMock;
+global.sessionStorage = storageMock;
 
 module.exports = async (bundler) => {
   // If you're in watch mode - you're developing so skip
